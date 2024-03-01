@@ -1,0 +1,4 @@
+node_modules
+.VSCodeCounter/
+config.js
+.env
