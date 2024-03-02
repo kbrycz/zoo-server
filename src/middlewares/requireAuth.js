@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
     }
 
     const token = authorization.replace('Bearer ', '')
-    jwt.verify(token, secrets.process.env, async (err, payload) => {
+    jwt.verify(token, process.env.KEY, async (err, payload) => {
         if (err) {
             console.log("User is not logged in. Error in verifying token.")
             return res.status(401).send({error: 'You must be logged in.'})
