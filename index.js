@@ -1,5 +1,8 @@
 require('dotenv').config(); // This should be at the top
 require('./src/models/User');
+require('./src/models/Post');
+require('./src/models/Animal');
+
 
 // Import all necessary dependencies
 const express = require('express')

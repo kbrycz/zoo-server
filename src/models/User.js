@@ -39,7 +39,4 @@ const userSchema = new mongoose.Schema({
     }
 })
 
-// Allows the location to be sortable
-userSchema.index({ location: "2dsphere" });
-
 mongoose.model('User', userSchema)
