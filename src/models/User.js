@@ -36,6 +36,11 @@ const userSchema = new mongoose.Schema({
     },
     expoToken: {
         type: Array
+    },
+    notifications: {
+        type: Boolean,
+        required: true,
+        default: true
     }
 })
 

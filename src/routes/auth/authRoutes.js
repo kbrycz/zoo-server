@@ -160,6 +160,7 @@ router.post('/signup', async (req, res) => {
         let last = userObj.last
         let birthdate = new Date(userObj.birthdate)
         let gender = userObj.gender
+        let notifications = true
 
         // Handle meme
         let profilePhoto = ''
@@ -175,7 +176,7 @@ router.post('/signup', async (req, res) => {
         let dateJoined = new Date()
 
         // Create the new user object
-        const newUser = new User({phone, dateJoined, first, last, birthdate, gender, currentRewards, lifetimeRewards, expoToken})
+        const newUser = new User({phone, dateJoined, first, last, birthdate, gender, currentRewards, lifetimeRewards, expoToken, notifications})
         await newUser.save()
 
         // Create token for user to save on their device

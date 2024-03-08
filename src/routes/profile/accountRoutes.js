@@ -27,8 +27,6 @@ router.post('/changeName', requireAuth, async (req, res) => {
     }
 })
 
-
-
 // Changes the birthdate of the user and returns the user object to user
 router.post('/changeBirthdate', requireAuth, async (req, res) => {
     const {birthdate} = req.body
@@ -70,6 +68,29 @@ router.post('/changeGender', requireAuth, async (req, res) => {
     }
     catch (err) {
         console.log("Unable to update gender info: " + err.message)
+        return res.status(422).send({error: err.message})
+    }
+})
+
+// Changes the notification settings of the user
+router.post('/changeNotifications', requireAuth, async (req, res) => {
+    const { notifications } = req.body
+
+    if (notifications === null) {
+        console.log("error with notifications variable")
+        return res.status(422).send({error: 'Must provide notifications'})
+    }
+    try {
+        User.findOne({_id: req.user._id}, (err, user) => {
+            user.notifications = notifications
+            user.save(() => {
+                console.log("User updated notifications object")
+                return res.send({user})
+            })
+        })
+    }
+    catch (err) {
+        console.log("Error with changing the notifications: " + err.message)
         return res.status(422).send({error: err.message})
     }
 })
