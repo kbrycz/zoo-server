@@ -4,7 +4,9 @@ const jwt = require('jsonwebtoken')
 const User = mongoose.model('User')
 const requireAuth = require('../../middlewares/requireAuth')
 const fs = require('fs')
-const { accountSID, authToken, serviceID } = require('../../../config')
+const accountSID = process.env.accountSID
+const authToken = process.env.authToken
+const serviceID = process.env.serviceID
 
 const router = express.Router()
 
