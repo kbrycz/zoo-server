@@ -4,11 +4,11 @@ const jwt = require('jsonwebtoken')
 const User = mongoose.model('User')
 const requireAuth = require('../../middlewares/requireAuth')
 const fs = require('fs')
-// const { accountSID, authToken, serviceID } = require('../../../config')
+const { accountSID, authToken, serviceID } = require('../../../config')
 
 const router = express.Router()
 
-// const client = require('twilio')(accountSID, authToken)
+const client = require('twilio')(accountSID, authToken)
 
 // Lets the user know that they are connected to the server
 router.get('/testConnection', async (req, res) => {
@@ -20,39 +20,42 @@ router.get('/testConnection', async (req, res) => {
     }
 })
 
-// // Checks if user has correct credentials and returns token for login or signup
-// router.get('/twilioVerify', async (req, res) => {
-//     try {
-//         const { phone } = req.query
-//         console.log("Phone is here: " + phone)
-    
-//         // If phone isn't passed in
-//         if (!phone) {
-//             return res.status(422).send({error: 'Must provide valid phone number'})
-//         }
+router.get('/twilioVerify', async (req, res) => {
+    try {
+        const { phone } = req.query;
+        console.log("Received phone number for verification: " + phone);
 
-//         // Calls twilio api and gets the auth token
-//         client
-//             .verify
-//             .services(serviceID)
-//             .verifications
-//             .create({
-//                 to: phone,
-//                 channel: "sms"
-//             })
-//             .then((data) => {
-//                 console.log(data)
-//                 return res.send({isGood: true})
-//             })
-//             .catch((err) => {
-//                 throw "Error with logging into account"
-//             })
-//     }
-//     catch (err) {
-//         console.log(err)
-//         return res.status(422).send({error: 'Unable to log into account at this time'})
-//     }
-// })
+        // Validate phone number
+        if (!phone) {
+            console.error("No phone number provided");
+            return res.status(422).send({ error: 'Must provide a valid phone number' });
+        }
+
+        // Call Twilio API to send verification code
+        client.verify.v2.services(serviceID)
+            .verifications
+            .create({
+                to: phone,
+                channel: "sms"
+            })
+            .then((data) => {
+                console.log("Twilio verification initiated: ", data);
+                return res.send({ isGood: true });
+            })
+            .catch((err) => {
+                // Log detailed error message from Twilio response
+                console.error("Error initiating Twilio verification: ", err);
+                // Respond with a more generic error message to the client
+                return res.status(500).send({ error: 'Failed to initiate verification. Please try again later.' });
+            });
+    } catch (err) {
+        // Log unexpected errors
+        console.error("Unexpected error in Twilio verification route: ", err);
+        // Respond with a generic error message
+        return res.status(500).send({ error: 'An unexpected error occurred. Please try again later.' });
+    }
+});
+
 
 // Checks if user has correct credentials and returns token for login or signup
 router.post('/handleAuth', async (req, res) => {
@@ -66,73 +69,73 @@ router.post('/handleAuth', async (req, res) => {
         }
 
         // DEV ONLY
-        // Tries to find a user with the phone number given
-        const user = await User.findOne({phone})    
+        // // Tries to find a user with the phone number given
+        // const user = await User.findOne({phone})    
 
-        // No user exists with phone number, so making new account
-        if (user === null) {
-            console.log("There is currently not a user with phone number. Sending to info screen first.")
-            return res.send({newAccount: true})
-        }
-        else {
-            // Create token for user to save on their device
-            const token = jwt.sign({userId: user._id}, process.env.KEY)
-            console.log("Signing the user in")
-            return res.send({token, user, newAccount: false})
-        }
+        // // No user exists with phone number, so making new account
+        // if (user === null) {
+        //     console.log("There is currently not a user with phone number. Sending to info screen first.")
+        //     return res.send({newAccount: true})
+        // }
+        // else {
+        //     // Create token for user to save on their device
+        //     const token = jwt.sign({userId: user._id}, process.env.KEY)
+        //     console.log("Signing the user in")
+        //     return res.send({token, user, newAccount: false})
+        // }
 
         // TODO UNCOMMENT OUT ON PRODUCTION ( NOT DEV ONLY )
-        // client
-        // .verify
-        // .services(serviceID)
-        // .verificationChecks
-        // .create({
-        //     to: phone,
-        //     code: code
-        // })
-        // .then(async (data) => {
+        client
+        .verify
+        .v2.services(serviceID)
+        .verificationChecks
+        .create({
+            to: phone,
+            code: code
+        })
+        .then(async (data) => {
 
-        //     if (data.valid == true) {
-        //         // Tries to find a user with the phone number given
-        //         const user = await User.findOne({phone})    
+            if (data.valid == true) {
+                // Tries to find a user with the phone number given
+                const user = await User.findOne({phone})    
 
-        //         // No user exists with phone number, so making new account
-        //         if (user === null) {
-        //             console.log("There is currently not a user with phone number. Sending to info screen first.")
-        //             return res.send({newAccount: true})
-        //         }
-        //         else {
-        //             // Create token for user to save on their device
-        //             const token = jwt.sign({userId: user._id}, process.env.KEY)
-        //             console.log("Signing the user in")
-        //             return res.send({token, user, newAccount: false})
-        //         }
-        //     }
-        //     else if (data.to == '+17794566027' && code == '23186') {
-        //         // Tries to find a user with the phone number given
-        //         const user = await User.findOne({phone})    
+                // No user exists with phone number, so making new account
+                if (user === null) {
+                    console.log("There is currently not a user with phone number. Sending to info screen first.")
+                    return res.send({newAccount: true})
+                }
+                else {
+                    // Create token for user to save on their device
+                    const token = jwt.sign({userId: user._id}, process.env.KEY)
+                    console.log("Signing the user in")
+                    return res.send({token, user, newAccount: false})
+                }
+            }
+            else if (data.to == '+17794566027' && code == '23186') {
+                // Tries to find a user with the phone number given
+                const user = await User.findOne({phone})    
 
-        //         // No user exists with phone number, so making new account
-        //         if (user === null) {
-        //             console.log("There is currently not a user with phone number. Sending to info screen first.")
-        //             return res.send({newAccount: true})
-        //         }
-        //         else {
-        //             // Create token for user to save on their device
-        //             const token = jwt.sign({userId: user._id}, process.env.KEY)
-        //             console.log("Signing the user in")
-        //             return res.send({token, user, newAccount: false})
-        //         }
-        //     }
-        //     else {
-        //         console.log("Unable to log into account at this time")
-        //         return res.status(422).send({error: 'Unable to log into account at this time'})
-        //     }
-        // })
-        // .catch((err) => {
-        //     console.log(err)
-        //     return res.status(422).send({error: 'Unable to log into account at this time'})
-        // })        
+                // No user exists with phone number, so making new account
+                if (user === null) {
+                    console.log("There is currently not a user with phone number. Sending to info screen first.")
+                    return res.send({newAccount: true})
+                }
+                else {
+                    // Create token for user to save on their device
+                    const token = jwt.sign({userId: user._id}, process.env.KEY)
+                    console.log("Signing the user in")
+                    return res.send({token, user, newAccount: false})
+                }
+            }
+            else {
+                console.log("Unable to log into account at this time")
+                return res.status(422).send({error: 'Unable to log into account at this time'})
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            return res.status(422).send({error: 'Unable to log into account at this time'})
+        })        
     }
     catch (err) {
         console.log(err)
