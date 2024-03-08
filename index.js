@@ -1,13 +1,13 @@
 require('dotenv').config(); // This should be at the top
-require('./api/models/User');
+require('./src/models/User');
 
 // Import all necessary dependencies
 const express = require('express')
 const mongoose = require('mongoose')
 
-const authRoutes = require('./api/routes/auth/authRoutes')
-const generalRoutes = require('./api/routes/general/generalRoutes')
-const userRoutes = require('./api/routes/user/userRoutes')
+const authRoutes = require('./src/routes/auth/authRoutes')
+const generalRoutes = require('./src/routes/general/generalRoutes')
+const userRoutes = require('./src/routes/user/userRoutes')
 
 // ****** Basic express set up ********
 
