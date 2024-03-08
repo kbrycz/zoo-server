@@ -14,6 +14,8 @@ const userRoutes = require('./src/routes/user/userRoutes')
 const postRoutes = require('./src/routes/post/postRoutes')
 const animalRoutes = require('./src/routes/animal/animalRoutes')
 const accountRoutes = require('./src/routes/profile/accountRoutes')
+const leaderboardRoutes = require('./src/routes/profile/leaderboardRoutes')
+const profileRoutes = require('./src/routes/profile/profileRoutes')
 
 // ****** Basic express set up ********
 

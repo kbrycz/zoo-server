@@ -28,42 +28,6 @@ router.post('/changeName', requireAuth, async (req, res) => {
 })
 
 
-// Changes the location of the user
-router.post('/changeLocation', requireAuth, async (req, res) => {
-    const { location } = req.body
-
-    if (!location) {
-        console.log("Error with location variable passed to server")
-        return res.send({user: req.user})
-    }
-    try {
-        User.findOne({_id: req.user._id}, (err, user) => {
-            let locationInfo = {
-                zip: location.zip,
-                city: location.city,
-                state: location.state
-            }
-            let array = []
-            array.push(location.long)
-            array.push(location.lat)
-            let tempLocation = {
-                type: 'Point',
-                coordinates: array
-            }
-            user.location = tempLocation
-            user.locationInfo = locationInfo
-            user.save(() => {
-                console.log("User updated location info")
-                return res.send({user})
-            })
-        })
-    }
-    catch (err) {
-        console.log("Unable to update location info: " + err.message)
-        return res.status(422).send({error: err.message})
-    }
-})
-
 
 // Changes the birthdate of the user and returns the user object to user
 router.post('/changeBirthdate', requireAuth, async (req, res) => {
@@ -87,27 +51,28 @@ router.post('/changeBirthdate', requireAuth, async (req, res) => {
     }
 })
 
-// Changes the notification settings of the user
-router.post('/changeNotifications', requireAuth, async (req, res) => {
-    const { notifications } = req.body
+// Changes the gender of the user
+router.post('/changeGender', requireAuth, async (req, res) => {
+    const { gender } = req.body
 
-    if (notifications === null) {
-        console.log("error with notifications variable")
-        return res.status(422).send({error: 'Must provide notifications'})
+    if (gender < 0) {
+        console.log("Error with gender variable passed to server")
+        return res.send({user: req.user})
     }
     try {
         User.findOne({_id: req.user._id}, (err, user) => {
-            user.notifications = notifications
+            user.gender = gender
             user.save(() => {
-                console.log("User updated notifications object")
+                console.log("User updated gender info")
                 return res.send({user})
             })
         })
     }
     catch (err) {
-        console.log("Error with changing the hideStatus: " + err.message)
+        console.log("Unable to update gender info: " + err.message)
         return res.status(422).send({error: err.message})
     }
 })
+
 
 module.exports = router
