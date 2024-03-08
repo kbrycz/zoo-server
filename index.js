@@ -11,6 +11,9 @@ const mongoose = require('mongoose')
 const authRoutes = require('./src/routes/auth/authRoutes')
 const generalRoutes = require('./src/routes/general/generalRoutes')
 const userRoutes = require('./src/routes/user/userRoutes')
+const postRoutes = require('./src/routes/post/postRoutes')
+const animalRoutes = require('./src/routes/animal/animalRoutes')
+const accountRoutes = require('./src/routes/profile/accountRoutes')
 
 // ****** Basic express set up ********
 
@@ -38,6 +41,15 @@ app.use(generalRoutes)
 
 // Handle the user routes
 app.use(userRoutes)
+
+// Handle the post routes
+app.use(postRoutes)
+
+// Handle the animal routes
+app.use(animalRoutes)
+
+// Handle the account routes
+app.use(accountRoutes)
 
 
 // Get mongodb all set up with mongoose
