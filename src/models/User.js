@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    dateJoined: {
+        type: Date
+    },
     first: {
         type: String,
         required: true
