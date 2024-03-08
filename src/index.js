@@ -55,7 +55,13 @@ mongoose.connection.on('error', (err) => {
 
 // ****** Start the application ********
 
-// Starts the app to listen on port 8080
-app.listen(8080, () => {
-    console.log('Listening on port 8080')
-})
+const port = process.env.PORT || 8080; // Fallback to 8080 if process.env.PORT is not set
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+});
+
+
+// Basic route
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+  });
