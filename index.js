@@ -53,6 +53,12 @@ app.use(animalRoutes)
 // Handle the account routes
 app.use(accountRoutes)
 
+// Handle the leaderboard routes
+app.use(leaderboardRoutes)
+
+// Handle the profile routes
+app.use(profileRoutes)
+
 
 // Get mongodb all set up with mongoose
 mongoose.connect(process.env.MONGO_URI, {
