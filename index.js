@@ -16,6 +16,8 @@ const animalRoutes = require('./src/routes/animal/animalRoutes')
 const accountRoutes = require('./src/routes/profile/accountRoutes')
 const leaderboardRoutes = require('./src/routes/profile/leaderboardRoutes')
 const profileRoutes = require('./src/routes/profile/profileRoutes')
+const aiRoutes = require('./src/routes/ai/aiRoutes')
+
 
 // ****** Basic express set up ********
 
@@ -58,6 +60,10 @@ app.use(leaderboardRoutes)
 
 // Handle the profile routes
 app.use(profileRoutes)
+
+// Handle the profile routes
+app.use(aiRoutes)
+
 
 
 // Get mongodb all set up with mongoose
