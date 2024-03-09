@@ -2,6 +2,7 @@ const express = require('express');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
+const requireAuth = require('../../middlewares/requireAuth')
 
 const router = express.Router();
 
@@ -23,13 +24,12 @@ async function generateContent(question) {
     const response = result.response;
     return response.text(); // Adjust based on actual method to get text
   } catch (err) {
-    console.log("Here is the key: " + process.env.GOOGLE_KEY.substring(0, 10))
     console.error("Error in generateContent:", err);
     throw err;
   }
 }
 
-router.get('/ask', async (req, res) => {
+router.get('/ask', requireAuth, async (req, res) => {
     const question = req.query.question;
     if (!question) {
         return res.status(400).send({ error: "Please provide a question." });
@@ -39,7 +39,6 @@ router.get('/ask', async (req, res) => {
         const answer = await generateContent(question);
         res.send({ answer });
     } catch (err) {
-        console.log("Here is the key: " + process.env.GOOGLE_KEY.substring(0, 10))
         console.error("Error in /ask:", err.message);
         res.status(500).send({ error: "An error occurred while generating the answer. Please try again later." });
     }
