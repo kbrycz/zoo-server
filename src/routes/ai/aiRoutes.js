@@ -23,6 +23,7 @@ async function generateContent(question) {
     const response = result.response;
     return response.text(); // Adjust based on actual method to get text
   } catch (err) {
+    console.log("Here is the key: " + process.env.GOOGLE_KEY.substring(0, 10))
     console.error("Error in generateContent:", err);
     throw err;
   }
@@ -38,6 +39,7 @@ router.get('/ask', async (req, res) => {
         const answer = await generateContent(question);
         res.send({ answer });
     } catch (err) {
+        console.log("Here is the key: " + process.env.GOOGLE_KEY.substring(0, 10))
         console.error("Error in /ask:", err.message);
         res.status(500).send({ error: "An error occurred while generating the answer. Please try again later." });
     }
