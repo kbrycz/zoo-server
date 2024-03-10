@@ -15,9 +15,12 @@ router.post('/changeName', requireAuth, async (req, res) => {
         return res.status(422).send({error: "Error with first and last names passed in"})
     }
     try {
+        console.log("insdie try")
+        console.log(req.user)
         User.findOne({_id: req.user._id}, (err, user) => {
             user.first = first
             user.last = last
+            console.log("sssssss")
             user.save(() => {
                 console.log("User updated first and last name")
                 return res.send({user})
@@ -25,6 +28,7 @@ router.post('/changeName', requireAuth, async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err)
         return res.status(422).send({error: err.message})
     }
 })
