@@ -6,6 +6,8 @@ const router = express.Router()
 
 // Changes the name of the user and returns user object to user
 router.post('/changeName', requireAuth, async (req, res) => {
+    console.log("Inside change name")
+    console.log(req.body)
     const {first, last} = req.body
 
     if (!first || !last) {
