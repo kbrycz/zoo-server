@@ -8,10 +8,10 @@ const path = require('path');
 
 // Submits a post
 router.post('/submitPost', async (req, res) => {
-    const { post, picture } = req.body;
+    const { post } = req.body;
 
     if (!post) {
-        console.log("Error with post value");
+        console.log("Error with post value: " + post);
         return res.status(422).send({ error: 'Must fill out all fields' });
     }
 
