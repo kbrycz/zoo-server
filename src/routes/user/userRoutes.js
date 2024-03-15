@@ -82,19 +82,19 @@ router.post('/updateExpoToken', requireAuth, async (req, res) => {
 
 // Search for a user by phone number
 router.get('/searchByPhoneNumber', async (req, res) => {
-    const { phoneNumber } = req.query;
-    console.log(`Searching for user by phone number: ${phoneNumber}`);
+    const { phone } = req.query;
+    console.log(`Searching for user by phone number: ${phone}`);
 
     try {
-        const user = await User.findOne({ phoneNumber: phoneNumber });
+        const user = await User.findOne({ phone: phone });
         if (!user) {
-            console.log(`User not found with phone number: ${phoneNumber}`);
+            console.log(`User not found with phone number: ${phone}`);
             return res.status(404).send({ error: 'User not found' });
         }
-        console.log(`User found with phone number: ${phoneNumber}`);
+        console.log(`User found with phone number: ${phone}`);
         res.send({ user });
     } catch (err) {
-        console.error(`Error searching user by phone number: ${phoneNumber}`, err);
+        console.error(`Error searching user by phone number: ${phone}`, err);
         res.status(500).send({ error: 'Search failed' });
     }
 });
