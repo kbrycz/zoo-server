@@ -2,33 +2,33 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Post = mongoose.model('Post');
 const requireAuth = require('../../middlewares/requireAuth');
+const fs = require('fs');
 const router = express.Router();
+const path = require('path');
 
 // Submits a post
 router.post('/submitPost', requireAuth, async (req, res) => {
-    try {
-        const { post } = req.body;
+    const { post, picture } = req.body;
 
-        if (!post) {
-            console.log("Error with post value");
-            return res.status(422).send({ error: 'Must fill out all fields' });
+    if (!post) {
+        console.log("Error with post value");
+        return res.status(422).send({ error: 'Must fill out all fields' });
+    }
+
+    try {
+        // If there's an image, save it to the filesystem
+        if (picture && picture.image && picture.imageName) {
+            const imagePath = path.join('uploads', 'events', picture.imageName);
+            await fs.promises.writeFile(imagePath, picture.image, 'base64');
+            post.picture = imagePath; // Store the path in the post object
         }
 
-        const newPost = new Post({
-            postType: post.postType,
-            title: post.title,
-            description: post.description,
-            date: post.date,
-            picture: post.picture,
-            link: post.link,
-        });
-
-        // Save the post
+        const newPost = new Post(post);
         await newPost.save();
         console.log("User submitted post successfully");
         return res.send({ post: newPost });
     } catch (err) {
-        console.log("Unable to post because: " + err.message);
+        console.log("Unable to submit post: " + err.message);
         return res.status(422).send({ error: err.message });
     }
 });

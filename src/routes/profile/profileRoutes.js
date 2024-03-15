@@ -18,7 +18,7 @@ router.post('/saveProfilePicture', requireAuth, async (req, res, next) => {
             throw "User does not exist"
         }
 
-        // If user is deleting meme
+        // If user is deleting prof picture
         if (!profilePicture) {
             if (user.profilePicture.length > 0) {
                 await fs.promises.unlink("uploads/" + user.profilePicture)
