@@ -82,36 +82,47 @@ router.post('/updateExpoToken', requireAuth, async (req, res) => {
 
 // Search for a user by phone number
 router.get('/searchByPhoneNumber', async (req, res) => {
+    const { phoneNumber } = req.query;
+    console.log(`Searching for user by phone number: ${phoneNumber}`);
+
     try {
-        const { phoneNumber } = req.query;
         const user = await User.findOne({ phoneNumber: phoneNumber });
         if (!user) {
+            console.log(`User not found with phone number: ${phoneNumber}`);
             return res.status(404).send({ error: 'User not found' });
         }
+        console.log(`User found with phone number: ${phoneNumber}`);
         res.send({ user });
     } catch (err) {
-        console.log("Search by phone number failed: ", err.message);
+        console.error(`Error searching user by phone number: ${phoneNumber}`, err);
         res.status(500).send({ error: 'Search failed' });
     }
 });
 
 // Search for users by first and last name
 router.get('/searchByName', async (req, res) => {
+    const { firstName, lastName } = req.query;
+    console.log(`Searching for users by name: ${firstName} ${lastName}`);
+
     try {
-        const { firstName, lastName } = req.query;
         const users = await User.find({ 
             firstName: { $regex: firstName, $options: 'i' }, 
-            lastName: { $regex: lastName, $options: 'i' } 
+            lastName: { $regex: lastName, $options: 'i' }
         });
+
         if (!users.length) {
+            console.log(`No users found with name: ${firstName} ${lastName}`);
             return res.status(404).send({ error: 'No users found' });
         }
+
+        console.log(`Found ${users.length} users with name: ${firstName} ${lastName}`);
         res.send({ users });
     } catch (err) {
-        console.log("Search by name failed: ", err.message);
+        console.error(`Error searching for users by name: ${firstName} ${lastName}`, err);
         res.status(500).send({ error: 'Search failed' });
     }
 });
+
 
 
 
