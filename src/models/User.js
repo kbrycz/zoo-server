@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    userType: {
+        type: Number,
+    },
     dateJoined: {
         type: Date
     },

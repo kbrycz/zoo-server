@@ -80,5 +80,39 @@ router.post('/updateExpoToken', requireAuth, async (req, res) => {
     }
 })
 
+// Search for a user by phone number
+router.get('/searchByPhoneNumber', async (req, res) => {
+    try {
+        const { phoneNumber } = req.query;
+        const user = await User.findOne({ phoneNumber: `+1${phoneNumber}` });
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+        res.send({ user });
+    } catch (err) {
+        console.log("Search by phone number failed: ", err.message);
+        res.status(500).send({ error: 'Search failed' });
+    }
+});
+
+// Search for users by first and last name
+router.get('/searchByName', async (req, res) => {
+    try {
+        const { firstName, lastName } = req.query;
+        const users = await User.find({ 
+            firstName: { $regex: firstName, $options: 'i' }, 
+            lastName: { $regex: lastName, $options: 'i' } 
+        });
+        if (!users.length) {
+            return res.status(404).send({ error: 'No users found' });
+        }
+        res.send({ users });
+    } catch (err) {
+        console.log("Search by name failed: ", err.message);
+        res.status(500).send({ error: 'Search failed' });
+    }
+});
+
+
 
 module.exports = router

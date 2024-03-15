@@ -170,13 +170,14 @@ router.post('/signup', async (req, res) => {
         }
 
         // User profile variables
+        let userType = 0
         let currentRewards = 0
         let lifetimeRewards = 0
         let expoToken = []
         let dateJoined = new Date()
 
         // Create the new user object
-        const newUser = new User({phone, dateJoined, first, last, birthdate, gender, currentRewards, lifetimeRewards, expoToken, notifications})
+        const newUser = new User({phone, userType, dateJoined, first, last, birthdate, gender, currentRewards, lifetimeRewards, expoToken, notifications})
         await newUser.save()
 
         // Create token for user to save on their device
