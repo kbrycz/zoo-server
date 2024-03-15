@@ -56,6 +56,34 @@ router.get('/getPosts', async (req, res) => {
     }
 });
 
+// Update a post
+router.patch('/updatePost/:id', requireAuth, async (req, res) => {
+    const { id } = req.params;
+    const { post } = req.body;
+
+    if (!post) {
+        console.log("Error with post update data");
+        return res.status(422).send({ error: 'Must provide post data to update' });
+    }
+
+    try {
+        // Find the post by id and update it with the new data
+        // The { new: true } option returns the updated document
+        const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+
+        if (!updatedPost) {
+            throw new Error('Post not found or could not be updated');
+        }
+
+        console.log("User updated post successfully");
+        return res.send({ post: updatedPost });
+    } catch (err) {
+        console.log("Unable to update post: " + err.message);
+        return res.status(422).send({ error: err.message });
+    }
+});
+
+
 // Deletes the post from the db
 router.delete('/deletePost', async (req, res) => {
     const { postId } = req.body;
