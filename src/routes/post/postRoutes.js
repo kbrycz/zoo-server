@@ -16,12 +16,12 @@ router.post('/submitPost', async (req, res) => {
     }
 
     try {
-        // If there's an image, save it to the filesystem
-        if (picture && picture.image && picture.imageName) {
-            const imagePath = path.join('uploads', 'events', picture.imageName);
-            await fs.promises.writeFile(imagePath, picture.image, 'base64');
-            post.picture = imagePath; // Store the path in the post object
-        }
+        // // If there's an image, save it to the filesystem
+        // if (picture && picture.image && picture.imageName) {
+        //     const imagePath = path.join('uploads', 'events', picture.imageName);
+        //     await fs.promises.writeFile(imagePath, picture.image, 'base64');
+        //     post.picture = imagePath; // Store the path in the post object
+        // }
 
         const newPost = new Post(post);
         await newPost.save();
@@ -40,11 +40,11 @@ router.get('/getPosts', async (req, res) => {
         const posts = await Post.find().sort({ createdAt: -1 }).limit(LIMIT).lean();
 
         // Update the posts with full URLs for the pictures
-        posts.forEach(post => {
-            if (post.picture) {
-                post.picture = `${req.protocol}://${req.get('host')}/uploads/events/${path.basename(post.picture)}`;
-            }
-        });
+        // posts.forEach(post => {
+        //     if (post.picture) {
+        //         post.picture = `${req.protocol}://${req.get('host')}/uploads/events/${path.basename(post.picture)}`;
+        //     }
+        // });
 
         console.log("Fetched posts successfully");
         return res.send(posts);
@@ -71,10 +71,10 @@ router.delete('/deletePost', async (req, res) => {
         }
 
         // Delete the image file if it exists
-        if (post.picture) {
-            const picturePath = path.join(uploadsDir, path.basename(post.picture));
-            await fs.promises.unlink(picturePath).catch(console.error);
-        }
+        // if (post.picture) {
+        //     const picturePath = path.join(uploadsDir, path.basename(post.picture));
+        //     await fs.promises.unlink(picturePath).catch(console.error);
+        // }
 
         // Now delete the post document
         const result = await post.deleteOne();
