@@ -106,8 +106,8 @@ router.get('/searchByName', async (req, res) => {
 
     try {
         const users = await User.find({ 
-            firstName: { $regex: firstName, $options: 'i' }, 
-            lastName: { $regex: lastName, $options: 'i' }
+            first: { $regex: firstName, $options: 'i' }, 
+            last: { $regex: lastName, $options: 'i' }
         });
 
         if (!users.length) {
