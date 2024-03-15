@@ -37,7 +37,15 @@ router.post('/submitPost', requireAuth, async (req, res) => {
 router.get('/getPosts', requireAuth, async (req, res) => {
     try {
         const LIMIT = 10;
-        const posts = await Post.find().sort({ createdAt: -1 }).limit(LIMIT);
+        const posts = await Post.find().sort({ createdAt: -1 }).limit(LIMIT).lean();
+
+        // Update the posts with full URLs for the pictures
+        posts.forEach(post => {
+            if (post.picture) {
+                post.picture = `${req.protocol}://${req.get('host')}/uploads/events/${path.basename(post.picture)}`;
+            }
+        });
+
         console.log("Fetched posts successfully");
         return res.send(posts);
     } catch (err) {
@@ -48,18 +56,32 @@ router.get('/getPosts', requireAuth, async (req, res) => {
 
 // Deletes the post from the db
 router.delete('/deletePost', requireAuth, async (req, res) => {
-    try {
-        const { postId } = req.body;
+    const { postId } = req.body;
 
+    try {
         if (!postId) {
             console.log("Error with postId value");
             return res.status(422).send({ error: 'postId not passed to server' });
         }
 
-        const result = await Post.deleteOne({ _id: postId });
+        // Find the post to get the picture path
+        const post = await Post.findById(postId);
+        if (!post) {
+            throw new Error('Post not found');
+        }
+
+        // Delete the image file if it exists
+        if (post.picture) {
+            const picturePath = path.join(uploadsDir, path.basename(post.picture));
+            await fs.promises.unlink(picturePath).catch(console.error);
+        }
+
+        // Now delete the post document
+        const result = await post.deleteOne();
         if (result.deletedCount === 0) {
             throw new Error('Post not found or already deleted');
         }
+
         console.log("Post deleted successfully");
         return res.send({ isDeleted: true });
     } catch (err) {
