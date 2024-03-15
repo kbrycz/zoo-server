@@ -84,7 +84,7 @@ router.post('/updateExpoToken', requireAuth, async (req, res) => {
 router.get('/searchByPhoneNumber', async (req, res) => {
     try {
         const { phoneNumber } = req.query;
-        const user = await User.findOne({ phoneNumber: `+1${phoneNumber}` });
+        const user = await User.findOne({ phoneNumber: phoneNumber });
         if (!user) {
             return res.status(404).send({ error: 'User not found' });
         }
