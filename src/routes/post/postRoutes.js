@@ -57,7 +57,7 @@ router.get('/getPosts', async (req, res) => {
 });
 
 // Update a post
-router.patch('/updatePost/:id', requireAuth, async (req, res) => {
+router.patch('/updatePost/:id', async (req, res) => {
     const { id } = req.params;
     const { post } = req.body;
 
