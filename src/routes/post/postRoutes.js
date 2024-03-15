@@ -7,7 +7,7 @@ const router = express.Router();
 const path = require('path');
 
 // Submits a post
-router.post('/submitPost', requireAuth, async (req, res) => {
+router.post('/submitPost', async (req, res) => {
     const { post, picture } = req.body;
 
     if (!post) {
@@ -34,7 +34,7 @@ router.post('/submitPost', requireAuth, async (req, res) => {
 });
 
 // Gets all the posts that the user should be seeing on their feed
-router.get('/getPosts', requireAuth, async (req, res) => {
+router.get('/getPosts', async (req, res) => {
     try {
         const LIMIT = 10;
         const posts = await Post.find().sort({ createdAt: -1 }).limit(LIMIT).lean();
@@ -55,7 +55,7 @@ router.get('/getPosts', requireAuth, async (req, res) => {
 });
 
 // Deletes the post from the db
-router.delete('/deletePost', requireAuth, async (req, res) => {
+router.delete('/deletePost', async (req, res) => {
     const { postId } = req.body;
 
     try {
