@@ -29,7 +29,7 @@ async function generateContent(question) {
   }
 }
 
-router.get('/ask', requireAuth, async (req, res) => {
+router.get('/ask', async (req, res) => {
     const question = req.query.question;
     if (!question) {
         return res.status(400).send({ error: "Please provide a question." });
