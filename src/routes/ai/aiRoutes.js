@@ -69,6 +69,7 @@ router.get('/postHelp', async (req, res) => {
     const post = req.query.post;
   
     if (!post) {
+      console.log("Please provide post details: " + post)
       return res.status(400).send({ error: "Please provide post details." });
     }
   
@@ -77,6 +78,7 @@ router.get('/postHelp', async (req, res) => {
     try {
       postDetails = JSON.parse(post);
     } catch (err) {
+      console.log("Invalid post details format: " + post)
       return res.status(400).send({ error: "Invalid post details format." });
     }
   
