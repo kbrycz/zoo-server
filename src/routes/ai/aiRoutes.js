@@ -50,21 +50,6 @@ router.get('/ask', async (req, res) => {
     }
 });
 
-router.get('/postHelp', async (req, res) => {
-  const question = req.query.question;
-  if (!question) {
-      return res.status(400).send({ error: "Please provide a question." });
-  }
-
-  try {
-      const answer = await generateContent(question, postHelperPrePrompt);
-      res.send({ answer });
-  } catch (err) {
-      console.error("Error in /ask:", err.message);
-      res.status(500).send({ error: "An error occurred while generating the answer. Please try again later." });
-  }
-});
-
 router.get('/getHelp', async (req, res) => {
   const question = req.query.question;
   if (!question) {
@@ -79,5 +64,47 @@ router.get('/getHelp', async (req, res) => {
       res.status(500).send({ error: "An error occurred while generating the answer. Please try again later." });
   }
 });
+
+router.get('/postHelp', async (req, res) => {
+    const post = req.query.post;
+  
+    if (!post) {
+      return res.status(400).send({ error: "Please provide post details." });
+    }
+  
+    // Attempt to parse the post object from the query
+    let postDetails;
+    try {
+      postDetails = JSON.parse(post);
+    } catch (err) {
+      return res.status(400).send({ error: "Invalid post details format." });
+    }
+  
+    // Construct a prompt string from the post object
+    const prompt = constructPromptFromPost(postDetails);
+  
+    try {
+      const answer = await generateContent(prompt, postHelperPrePrompt);
+      res.send({ answer });
+    } catch (err) {
+      console.error("Error in /postHelp:", err.message);
+      res.status(500).send({ error: "An error occurred while generating the answer. Please try again later." });
+    }
+  });
+
+// Helper function to construct a prompt string from the post object
+function constructPromptFromPost(post) {
+    const { title, description, postType, date, link } = post;
+    let prompt = "";
+  
+    if (title) prompt += `Title: ${title}\n`;
+    if (description) prompt += `Description: ${description}\n`;
+    if (postType) prompt += `Type: ${postType === '0' ? 'Event' : 'Internal'}\n`;
+    if (date) prompt += `Date: ${date}\n`;
+    if (link) prompt += `Link: ${link}\n`;
+  
+    // Add more details or modify the prompt structure as needed
+    return prompt;
+  }
 
 module.exports = router;
